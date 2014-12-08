@@ -28,12 +28,12 @@ def load_xml_file(filename,test_word):
 #        temp = [x.encode('utf-8') for x in li]
 if __name__ == '__main__':
     f = open('query.txt')
-    for l in f:
-        temp_test=l.strip().split(' ').pop()
-        break
-    for i in temp_test:
-        temp_test.replace(" ","")
+#   for l in f:
+#       temp_test=l.strip().split(' ').pop()
+#       break
+#   for i in temp_test:
+#       temp_test.replace(" ","")
 # print temp_test
     workpath = os.getcwd()
 
-    load_xml_file('/database/1' ,u"億")
+    load_xml_file('./database/1' ,u"億")

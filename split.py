@@ -1,34 +1,56 @@
-#!/usr/bin/env python  
-# -*- coding: UTF-8  -*-  
-import os  
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
-import split
-import xml.etree.ElementTree as ET  
 reload(sys)
 sys.setdefaultencoding('utf8')
-def load_xml_file(filename,test_word):
-    slist = []
-    root = ET.parse(filename).getroot()  
-    temp = root[0][2]
-    for child in temp:
-        s1 = child.text
-        slist=split.spli(s1)
-#        for i in range(0,len(slist)):
-#            if(test_word in slist[i]):
-#                print slist[i],"yaya"
-#            else :
-#                print slist[i]
+def check_contain_chinese(check_str):
+    for ch in check_str.decode('utf-8'):
+        if u'\u4e00' <= ch <= u'\u9fff':
+            return True
+    return False
 
-#str_symptom = str(li).replace('u\'','\'')
-#       str_symptom.decode("utf8-escape")
-#        temp = [x.encode('utf-8') for x in li]
-if __name__ == '__main__':
-    f = open('../query.txt')
-    for l in f:
-        temp_test=l.strip().split(' ').pop()
-        break
-    for i in temp_test:
-        temp_test.replace(" ","")
-# print temp_test
-    workpath = os.getcwd()
-    load_xml_file('%s/1' % workpath,u"LED") 
+def spli(s):
+#s = sys.argv[1]
+#    print s
+    slist = []
+    keys = []
+    temp=''
+    for i in s:
+        if not isinstance(i,unicode):
+            i = i.decode("utf-8")
+#  print i
+        if(check_contain_chinese(i)):
+            if (temp<>''):
+                slist.append(temp)
+                key = '%X' %ord(i)
+                keys.append(key)
+                temp = ''
+            slist.append(i)
+            key = '%X' % ord(i)
+            keys.append(key)
+        else :
+            if(i!=' '):
+                temp+=i
+            else: 
+                slist.append(temp)
+                key = '%X' %ord(i)
+                keys.append(key)
+                temp = ''
+    if (temp<>''):
+        slist.append(temp)
+        key = '%X' %ord(i)
+        keys.append(key)
+        temp = ''
+    return slist
+#for i in range(0,len(slist)):
+#       print slist[i]
+#return slist
+#if(u'北' in slist[i]):
+#       print "haha"
+#   else:
+#       print "QQ"
+#print len(slist)
+#print slist
+
+#print len(keys)
+#print keys
