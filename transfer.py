@@ -1,8 +1,9 @@
 #!/usr/bin/env python  
 # -*- coding: UTF-8  -*-  
-import os  
+import os 
 import sys
 import split
+from glob import glob 
 import xml.etree.ElementTree as ET  
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -14,13 +15,17 @@ def load_xml_file(filename,test_word):
     temp = root[0][2]
     for child in temp:
         s1 = child.text
-        slist+=split.spli(s1)
+#print s1
+        if s1 is None:
+            pass
+        else :
+            slist+=split.spli(s1)
 #        for i in range(0,len(slist)):
 #           if(test_word in slist[i]):
 #               print slist[i],"yaya"
-#           else :
+#       `    else :
 #               print slist[i]
-# for i in range(0,len(slist)):
+#    for i in range(0,len(slist)):
 #       print slist[i]
     return slist
 #str_symptom = str(li).replace('u\'','\'')
@@ -35,5 +40,6 @@ if __name__ == '__main__':
 #       temp_test.replace(" ","")
 # print temp_test
     workpath = os.getcwd()
-
-    load_xml_file('./database/1' ,u"億")
+#    DATA = '/Users/wupoyu/Desktop/IR/github/IR_Final_QuerySys/database/*'
+#   for f in glob(DATA):
+    load_xml_file("database/100093" ,u"億")
