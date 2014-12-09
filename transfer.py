@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 #import xml.etree.ElementTree as ET  
 reload(sys)
 sys.setdefaultencoding('utf8')
-def load_xml_file(filename,test_word):
+def load_xml_file(filename):
 #    print root.tag    
     slist = []
 #    tree =  ET()
@@ -36,7 +36,7 @@ def load_xml_file(filename,test_word):
 #               print slist[i]
 #    for i in range(0,len(slist)):
 #       print slist[i]
-    print filename
+    return slist
 """
     for i in range(0,len(slist)):
         print slist[i]"""    
@@ -53,5 +53,5 @@ if __name__ == '__main__':
 # print temp_test
     DATA = '/Users/wupoyu/Desktop/IR/github/IR_Final_QuerySys/database/*'
     for f in glob(DATA):
-        load_xml_file(f ,u" ")
-#    load_xml_file("database/100180" ,u" ")
+        load_xml_file(f)
+#    load_xml_file("database/100180")
