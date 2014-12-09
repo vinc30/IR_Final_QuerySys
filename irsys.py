@@ -46,7 +46,7 @@ def calTF(wordlist, qstr):
         idxlist = [i for (i, j) in enumerate(wordlist) if j == qstr]
         for idx in idxlist:
             match = 1
-            for i in len(qstr):
+            for i in range(len(qstr)):
                 if qstr[i] != wordlist[idx + i]:
                     match = 0
             if match == 1:
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # query = []
     # for i in range(len(sys.argv) - 1):
     #     query.append(sys.argv[i + 1])
-    fq = open("query.txt", "r")
+    fq = open("sampleq.txt", "r")
 
     # ISSUE#1: Can't handle Chinese query  
     
@@ -73,6 +73,7 @@ if __name__ == "__main__":
     # print "#doc = " + str(len(glob(DATAPATH)))
     scores = list()
     dbfiles = glob(DATAPATH)
+    result = open("result.txt", "w+")
     for query in fq:
         terms = query.strip().split(" ")
         for i in range(len(terms) - 1):
@@ -87,4 +88,6 @@ if __name__ == "__main__":
                 scores.append(score)
             rank = sorted(zip(range(len(scores)), scores), key=lambda i:i[1], reverse=True)
             for i in range(100):
-                print rank[i]
+                # print rank[i]
+                result.write(str(rank[i]) + ",")
+            result.write("\n")
