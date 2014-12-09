@@ -25,7 +25,7 @@ def calIDF(datapath, qstr):
     dbfiles = glob(datapath)
     for docpath in dbfiles:
         # wordset = seg(open(docpath, "r").read())
-        wordset = transfer.load_xml_file(docpath, " ")
+        wordset = transfer.load_xml_file(docpath)
         # if qstr in wordset:
         #     idf += 1
         if qstr[0] in wordset:
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             for docpath in dbfiles:
                 # ISSUE#2: A mysterious func that turn .xml file into word segments
                 # words = seg(open(docpath, "r").read())
-                words = transfer.load_xml_file(docpath, " ")
+                words = transfer.load_xml_file(docpath)
                 score = float(0)
                 for q in query:
                     score += calTFIDF(DATAPATH, words, q)
