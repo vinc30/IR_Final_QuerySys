@@ -18,7 +18,6 @@ for i in range(len(glob(DATAPATH))):
     for i in soup.findAll('p'):
         content += i.get_text()
     testlist.append(content)
-
 #testlist = ["我喜欢吃土豆","土豆是个百搭的东西","我不喜欢今天雾霾的北京"]
 words=[]
 for doc in testlist:
@@ -27,21 +26,28 @@ for doc in testlist:
 dic = corpora.Dictionary(words)
 #print dic
 #print dic.token2id
-
 #for word,index in dic.token2id.iteritems():
 #   print word +" 编号为:"+ str(index)
 corpus = [dic.doc2bow(text) for text in words] #print corpus
-
 tfidf = models.TfidfModel(corpus)
-vec = [(0, 1), (4, 1)] #print tfidf[vec]
 corpus_tfidf = tfidf[corpus]
-"""
-    for doc in corpus_tfidf:
-    print doc
-    """
+fq = open("sampleq.txt", "r")
+#for query in querylist:
 index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len(dic))#need to get from print dic 25
-sims = index[tfidf[vec]]
-#print list(enumerate(sims))
-temp = list(enumerate(sims))
-for i in temp:
-   print i
+for q in fq:
+    query = q[2:]
+#query = "鄭捷 捷運"
+    vec = dic.doc2bow(query.lower().split()) # or like corpus = [dic.doc2bow(text) for text in words]
+    sims = index[tfidf[vec]]
+#    for doc in corpus_tfidf:
+#   print doc
+#    """
+    result = sorted(list(enumerate(sims)), reverse=True, key=lambda x: x[1])
+    resultlist = list()
+
+    for i in range(100):
+        resultlist.append(result[i])
+    fresult = open("result.txt", "a+")
+    fresult.write(str(resultlist))
+
+fresult.close()
