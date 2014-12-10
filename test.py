@@ -7,11 +7,13 @@ import sys
 from bs4 import BeautifulSoup
 from glob import glob
 testlist = []
-DATAPATH = "/Users/wupoyu/Desktop/IR/github/IR_Final_QuerySys/database/*"
-for i in glob(DATAPATH):
-    print i
+DATAPATH = "/Users/wupoyu/Desktop/IR/github/IR_Final_QuerySys/minidata/*"
+#news_random_id_unlabeled_new/*"
+for i in range(len(glob(DATAPATH))):
+#print i
     content=''
-    sentences = open(i).read()
+    sentences = open(glob("minidata/" + str(i))[0]).read()
+#sentences = open( glob('minidata/'+ str(i)) ).read()
     soup = BeautifulSoup(sentences)
     for i in soup.findAll('p'):
         content += i.get_text()
@@ -23,7 +25,7 @@ for doc in testlist:
     words.append(list(jieba.cut(doc)))
 #    print words
 dic = corpora.Dictionary(words)
-print dic
+#print dic
 #print dic.token2id
 
 #for word,index in dic.token2id.iteritems():
@@ -37,9 +39,9 @@ corpus_tfidf = tfidf[corpus]
     for doc in corpus_tfidf:
     print doc
     """
-#index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=112746)#need to get from print dic 25
-#sims = index[tfidf[vec]]
+index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len(dic))#need to get from print dic 25
+sims = index[tfidf[vec]]
 #print list(enumerate(sims))
-#temp = list(enumerate(sims))
-#for i in temp:
-#   print i
+temp = list(enumerate(sims))
+for i in temp:
+   print i
