@@ -38,9 +38,14 @@ fq = open("query.txt", "r")
 #for query in querylist:
 index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len(dic))#need to get from print dic 25
 for q in fq:
-    query = "".join(q.strip().split(" ")[1:])
+    query = q.strip().split(" ")[1:]
+    # query = "".join(q.strip().split(" ")[1:])
 #query = "鄭捷 捷運"
-    vec = dic.doc2bow(list(jieba.cut(query.lower(), cut_all=False))) # or like corpus = [dic.doc2bow(text) for text in words]
+    # vec = dic.doc2bow(list(jieba.cut(query.lower(), cut_all=False))) # or like corpus = [dic.doc2bow(text) for text in words]
+    vec = list()
+    for i in range(len(query)):
+        for j in len(dic.doc2bow(list(jieba.cut(query[i].lower(), cut_all=False)))):
+            vec.append(dic.doc2bow(list(jieba.cut(query[i].lower(), cut_all=False)))[j])
     # vec = dic.doc2bow(query.split())
     sims = index[tfidf[vec]]
     print vec
@@ -51,7 +56,7 @@ for q in fq:
     resultlist = list()
 
     for i in range(100):
-        resultlist.append(result[i])
-    fresult = open("result_nojieba.txt", "a+")
+        resultlist.append(result[i][0])
+    fresult = open("result_final.txt", "a+")
     fresult.write(str(resultlist) + "\n")
 fresult.close()
