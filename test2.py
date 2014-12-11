@@ -15,6 +15,7 @@ for i in range(len(glob(DATAPATH))):
     sentences = open(glob("database/" + str(i))[0]).read()
 #sentences = open( glob('minidata/'+ str(i)) ).read()
     soup = BeautifulSoup(sentences)
+    content+=soup.find('title').get_text()
     for i in soup.findAll('p'):
         content += i.get_text()
     testlist.append(content)
@@ -22,7 +23,8 @@ for i in range(len(glob(DATAPATH))):
 words=[]
 jieba.set_dictionary('dict.txt.big')
 for doc in testlist:
-    words.append(list(jieba.cut(doc, cut_all=False)))
+    words.append(list(jieba.cut(doc.lower(), cut_all=False)))
+    # words.append(doc.split()) 
 #    print words
 dic = corpora.Dictionary(words)
 #print dic
@@ -36,9 +38,10 @@ fq = open("query.txt", "r")
 #for query in querylist:
 index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len(dic))#need to get from print dic 25
 for q in fq:
-    query = q[2:]
+    query = "".join(q.strip().split(" ")[1:])
 #query = "鄭捷 捷運"
-    vec = dic.doc2bow(query.lower().split()) # or like corpus = [dic.doc2bow(text) for text in words]
+    vec = dic.doc2bow(list(jieba.cut(query.lower(), cut_all=False))) # or like corpus = [dic.doc2bow(text) for text in words]
+    # vec = dic.doc2bow(query.split())
     sims = index[tfidf[vec]]
     print vec
 #    for doc in corpus_tfidf:
@@ -49,6 +52,6 @@ for q in fq:
 
     for i in range(100):
         resultlist.append(result[i])
-    fresult = open("result.txt", "a+")
+    fresult = open("result_nojieba.txt", "a+")
     fresult.write(str(resultlist) + "\n")
 fresult.close()
