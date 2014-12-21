@@ -1,4 +1,5 @@
-from text.classifiers import NaiveBayesClassifier
+from textblob.classifiers import NaiveBayesClassifier
+from textblob import TextBlob
 #from text.blob import TextBlob
 #-m textblob.download_corpora
 #from nltk import NaiveBayesClassifier
