@@ -38,7 +38,7 @@ year = "((?<=\s)\d{4}|^\d{4})"
 regxp1 = "((\d+|(" + numbers + "[-\s]?)+) " + dmy + "s? " + exp1 + ")"
 regxp2 = "(" + exp2 + " (" + dmy + "|" + week_day + "|" + month + "))"
 #regxp3 = "[(\d月)(\d日)]"
-regxp3 = u"(\d+?月)(\d+?日)"
+regxp3 = "(\d+?日)"
 reg1 = re.compile(regxp1, re.IGNORECASE)
 reg2 = re.compile(regxp2, re.IGNORECASE)
 reg3 = re.compile(rel_day, re.IGNORECASE)
@@ -244,16 +244,23 @@ def ground(tagged_text, base_date):
 
             # iso_week returns a triple (year, week, day) hence, retrieve
             # only week value.
-            week = (base_date + RelativeDateTime(weeks=-1)).iso_week[1]
-            timex_val = str(year) + 'W' + str(week)
+	    timex_val = str(base_date + RelativeDateTime(weeks=-1))
+            #change
+	  #  week = (base_date + RelativeDateTime(weeks=-1)).iso_week[1]
+          #  timex_val = str(year) + 'W' + str(week)
         elif re.match(r'this week|本週', timex, re.IGNORECASE):
             year = (base_date + RelativeDateTime(weeks=0)).year
-            week = (base_date + RelativeDateTime(weeks=0)).iso_week[1]
-            timex_val = str(year) + 'W' + str(week)
+	    
+	    timex_val = str(base_date + RelativeDateTime(weeks=0))
+	    #change
+            #week = (base_date + RelativeDateTime(weeks=0)).iso_week[1]
+            #timex_val = str(year) + 'W' + str(week)
         elif re.match(r'next week|下週', timex, re.IGNORECASE):
             year = (base_date + RelativeDateTime(weeks=+1)).year
-            week = (base_date + RelativeDateTime(weeks=+1)).iso_week[1]
-            timex_val = str(year) + 'W' + str(week)
+	    timex_val = str(base_date + RelativeDateTime(weeks=+1))
+	    #change
+            #week = (base_date + RelativeDateTime(weeks=+1)).iso_week[1]
+            #timex_val = str(year) + 'W' + str(week)
 
         # Month in the previous year.
         elif re.match(r'last ' + month, timex, re.IGNORECASE):
@@ -302,14 +309,18 @@ def ground(tagged_text, base_date):
         elif re.match(r'\d+ weeks? (ago|earlier|before)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
             year = (base_date + RelativeDateTime(weeks=-offset)).year
-            week = (base_date + \
-                            RelativeDateTime(weeks=-offset)).iso_week[1]
-            timex_val = str(year) + 'W' + str(week)
+            
+            timex_val = str(base_date + RelativeDateTime(weeks=-offset)))
+	    #week = (base_date + RelativeDateTime(weeks=-offset)).iso_week[1]
+            #timex_val = str(year) + 'W' + str(week)
         elif re.match(r'\d+ weeks? (later|after)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
             year = (base_date + RelativeDateTime(weeks=+offset)).year
-            week = (base_date + RelativeDateTime(weeks=+offset)).iso_week[1]
-            timex_val = str(year) + 'W' + str(week)
+            
+            timex_val = str(base_date + RelativeDateTime(weeks=+offset))
+	    #change
+            #week = (base_date + RelativeDateTime(weeks=+offset)).iso_week[1]
+            #timex_val = str(year) + 'W' + str(week)
         elif re.match(r'\d+ months? (ago|earlier|before)', timex, re.IGNORECASE):
             extra = 0
             offset = int(re.split(r'\s', timex)[0])
