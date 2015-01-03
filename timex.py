@@ -310,7 +310,7 @@ def ground(tagged_text, base_date):
             offset = int(re.split(r'\s', timex)[0])
             year = (base_date + RelativeDateTime(weeks=-offset)).year
             
-            timex_val = str(base_date + RelativeDateTime(weeks=-offset)))
+            timex_val = str(base_date + RelativeDateTime(weeks=-offset))
 	    #week = (base_date + RelativeDateTime(weeks=-offset)).iso_week[1]
             #timex_val = str(year) + 'W' + str(week)
         elif re.match(r'\d+ weeks? (later|after)', timex, re.IGNORECASE):
