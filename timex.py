@@ -30,7 +30,7 @@ week_day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday|星期一|
 month = "(january|february|march|april|may|june|july|august|september| \
           october|november|december|一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)"
 dmy = "(year|day|week|month|年|日|周|月|週|禮拜|天)"
-rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|昨天|明天|今日|昨日|明日|今晚|昨)"
+rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|昨天|明天|今日|昨日|明日|今晚)"
 exp1 = "(before|after|earlier|later|ago|上個|下個|前|上|下|前)"
 exp2 = "(this|next|last|上個|下個|上|下|前|今)"
 iso = "\d+[/-]\d+[/-]\d+ \d+:\d+:\d+\.\d+"
@@ -44,7 +44,7 @@ reg1 = re.compile(regxp1, re.IGNORECASE)
 reg2 = re.compile(regxp2, re.IGNORECASE)
 reg3 = re.compile(rel_day, re.IGNORECASE)
 reg4 = re.compile(iso)
-reg5 = re.compile(year)
+#reg5 = re.compile(year)
 reg6 = re.compile(regxp3)
 def tag(text):
 
@@ -75,9 +75,10 @@ def tag(text):
         timex_found.append(timex)
 
     # Year
-    found = reg5.findall(text)
+    """found = reg5.findall(text)
     for timex in found:
         timex_found.append(timex)
+    """
     # *月*日
     found = reg6.findall(text)
     for timex in found:
@@ -98,7 +99,15 @@ hashweekdays = {
     'Thursday': 3,
     'Friday': 4,
     'Saturday': 5,
-    'Sunday': 6}
+    'Sunday': 6,
+    '星期一':0,
+    '星期二':1,
+    '星期三':2,
+    '星期四':3,
+    '星期五':4,
+    '星期六':5,
+    '星期天':6,
+    '星期日':6}
 
 # Hash function for months to simplify the grounding task.
 # [Jan..Dec] -> [1..12]
