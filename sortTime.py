@@ -20,23 +20,31 @@ import dateutil.parser
 import numpy as np
 
 
+
 def getTime(article):
     """
     Do something to get the lastest date in the article, in Unix Time form (a.k.a. seconds from 1970/1/1)
     """
     # Warning: mx.Datetime.now() should be replaced with some other time in 2014!!!!
-    tagged = timex.ground(timex.tag(article), mx.Datetime.now())
+    tagged = timex.ground(timex.tag(article), mx.DateTime.now())
     # example: tagged = u'<TIMEX2 val="2014W52">last week</TIMEX2>'
     soup = BeautifulSoup(tagged)
     if soup.timex2 == None:
-        print("OMG can you believe that! This article has no time tags!==\n" + article + "\n==end of article")
+        print("OMG can you believe that! This article has no time tags!==\n" + article + "\n==end of article").encode('utf-8')
+        # print("OMG no tags!")
         return int(10000+ random.random() * 100)
     else:
         tagtimes = list()
         for i in soup.findAll('timex2'):
             timestr = i['val']
-            tagtimes.append(int(dateutil.parser(timestr).strftime('%s')))
-        return np.array(tagtimes).min()
+            if timestr != 'UNKNOWN':
+                tagtimes.append(int(dateutil.parser.parse(timestr).strftime('%s')))
+            else:
+                print i
+        if tagtimes != list():
+            return np.array(tagtimes).min()
+        else:
+            return 0
 
 
 
@@ -56,7 +64,7 @@ def file2str(filename):
 
 
 if __name__ == "__main__":
-    fphase1 = open("phase1_pooling_result.txt ", "r")
+    fphase1 = open("phase1_pooling_result.txt", "r")
     fout = open("phase1_pooling_result_time_sorted.txt", "w")
     for line in fphase1:
         news = line.strip().split(" ")
@@ -65,5 +73,5 @@ if __name__ == "__main__":
             newstime.append(getTime(file2str(i)))
         sortednews = sorted(zip(news, newstime), key=lambda x:x[1])
         for t in sortednews:
-            fout.write(str(t[1]))
+            fout.write(str(t[1]) + " ")
         fout.write('\n')
