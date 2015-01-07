@@ -30,7 +30,7 @@ week_day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday|星期一|
 month = "(january|february|march|april|may|june|july|august|september| \
           october|november|december|一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)"
 dmy = "(year|day|week|month|年|日|周|月|週|禮拜|天)"
-rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|昨天|明天|今日|昨日|明日|今晚|昨)"
+rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|昨天|明天|今日|昨日|明日|今晚|昨|頭七)"
 exp1 = "(before|after|earlier|later|ago|上個|下個|前|上|下|前)"
 exp2 = "(this|next|last|上個|下個|上|下|前|今)"
 iso = "\d+[/-]\d+[/-]\d+ \d+:\d+:\d+\.\d+"
@@ -269,7 +269,7 @@ def ground(tagged_text, base_date):
 	    #change
             #week = (base_date + RelativeDateTime(weeks=0)).iso_week[1]
             #timex_val = str(year) + 'W' + str(week)
-        elif re.match(r'next week|下週|下禮拜|下星期', timex, re.IGNORECASE):
+        elif re.match(r'next week|下週|下禮拜|下星期|下周', timex, re.IGNORECASE):
             year = (base_date + RelativeDateTime(weeks=+1)).year
 	    timex_val = str(base_date + RelativeDateTime(weeks=+1))
 	    #change
@@ -298,7 +298,7 @@ def ground(tagged_text, base_date):
                 timex_val = str(base_date.year) + '-' + str(base_date.month - 1)
         elif re.match(r'this month|這個月', timex, re.IGNORECASE):
                 timex_val = str(base_date.year) + '-' + str(base_date.month)
-        elif re.match(r'next month|下個月', timex, re.IGNORECASE):
+        elif re.match(r'next month|下個月|下月', timex, re.IGNORECASE):
             # Handles the year boundary.
             if base_date.month == 12:
                 timex_val = str(base_date.year + 1) + '-' + '1'
