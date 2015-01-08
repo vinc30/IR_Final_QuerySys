@@ -55,14 +55,12 @@ def tag(text):
     # re.findall() finds all the substring matches, keep only the full
     # matching string. Captures expressions such as 'number of days' ago, etc.
     found = reg1.findall(text)
-    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
         timex_found.append(timex)
 
     # Variations of this thursday, next year, etc
     found = reg2.findall(text)
-    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
 	
@@ -85,10 +83,13 @@ def tag(text):
     """
      #*月*日
     found = reg6.findall(text)
-    print(found)
-    found = [a[0] for a in found if len(a) > 1]
+    founded=[]
+    for a in found:
+	founded.append(sorted(a, key=lambda x:len(x), reverse=True)[0])
+   # found = [a[0] for a in found if len(a) > 1]
+   # print(found)
     #found = reg6.findall(text)
-    for timex in found:
+    for timex in founded:
         timex_found.append(timex)
     
     # Tag only temporal expressions which haven't been tagged.
