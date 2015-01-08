@@ -38,8 +38,9 @@ year = "((?<=\s)\d{4}|^\d{4})"
 regxp1 = "((\d+|(" + numbers + "[-\s]?)+) " + dmy + "s? " + exp1 + ")"
 regxp2 = "(" + exp2 + "(" + dmy + "|" + week_day + "|" + month + "))"
 #regxp2 = "(" + exp2 + " (" + dmy + "|" + week_day + "|" + month + "))"
-#regxp3 = "[(\d月)(\d日)]"
-regxp3 = "(\d+?日)"
+#regxp3 = "(\d{2}月)(\d{2}日)"
+#regxp3 = "(\d+?月)(\d+?日)"
+regxp3 = '((\d{4}年)?(\d{1,2}月)?(\d{1,2}日))|((\d{4}年)?(\d{1,2}月)(\d{1,2}日)?)'
 reg1 = re.compile(regxp1, re.IGNORECASE)
 reg2 = re.compile(regxp2, re.IGNORECASE)
 reg3 = re.compile(rel_day, re.IGNORECASE)
@@ -54,14 +55,17 @@ def tag(text):
     # re.findall() finds all the substring matches, keep only the full
     # matching string. Captures expressions such as 'number of days' ago, etc.
     found = reg1.findall(text)
+    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
         timex_found.append(timex)
 
     # Variations of this thursday, next year, etc
     found = reg2.findall(text)
+    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
+	
         timex_found.append(timex)
 
     # today, tomorrow, etc
@@ -79,8 +83,11 @@ def tag(text):
     for timex in found:
         timex_found.append(timex)
     """
-    # *月*日
+     #*月*日
     found = reg6.findall(text)
+    print(found)
+    found = [a[0] for a in found if len(a) > 1]
+    #found = reg6.findall(text)
     for timex in found:
         timex_found.append(timex)
     
