@@ -10,6 +10,9 @@ import re
 import string
 import os
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+from datetime import datetime, date, time
 
 # Requires eGenix.com mx Base Distribution
 # http://www.egenix.com/products/python/mxBase/
@@ -40,7 +43,7 @@ regxp2 = "(" + exp2 + "(" + dmy + "|" + week_day + "|" + month + "))"
 #regxp2 = "(" + exp2 + " (" + dmy + "|" + week_day + "|" + month + "))"
 #regxp3 = "(\d{2}月)(\d{2}日)"
 #regxp3 = "(\d+?月)(\d+?日)"
-regxp3 = '((\d{4}年)?(\d{1,2}月)?(\d{1,2}日))|((\d{4}年)?(\d{1,2}月)(\d{1,2}日)?)'
+regxp3 = '((\d{2}年)?(\d{1,2}月)?(\d{1,2}日))|((\d{2}年)?(\d{1,2}月)(\d{1,2}日)?)'
 reg1 = re.compile(regxp1, re.IGNORECASE)
 reg2 = re.compile(regxp2, re.IGNORECASE)
 reg3 = re.compile(rel_day, re.IGNORECASE)
@@ -227,8 +230,8 @@ def ground(tagged_text, base_date):
             timex_val = str(dmy[2]) + '-' + str(dmy[1]) + '-' + str(dmy[0])
 
         # Specific dates
-        elif re.match(r'\d{4}', timex):
-            timex_val = str(timex)
+  #      elif re.match(r'\d{4}', timex):
+   #         timex_val = str(timex)
 
         # Relative dates
         elif re.match(r'tonight|tonite|today|今天|今晚|今日|今', timex, re.IGNORECASE):
@@ -376,8 +379,28 @@ def ground(tagged_text, base_date):
         elif re.match(r'\d+ years? (later|after)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
             timex_val = str(base_date.year + offset)
-
-        # Remove 'time' from timex_val.
+	#new 
+	#%y年%b月%d日
+	elif re.match(r'(\d{2}年)(\d{1,2}月)(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%y年%m月%d日")
+	    timex_val = str(dt.strftime('%Y-%m-%d'))
+	#%y年%月
+	elif re.match(r'(\d{2}年)(\d{1,2}月)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%y年%m月")
+	    timex_val = str(dt.strftime('%Y-%m'))
+	#月日
+	elif re.match(r'(\d{1,2}月)(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%m月%d日")
+	    timex_val = str(dt.strftime('%m-%d'))
+	#日
+	elif re.match(r'(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%d日")
+	    timex_val = str(base_date.month)+'-'+str(dt.strftime('%d'))
+        #月
+	elif re.match(r'(\d{1,2}月)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%m月")
+	    timex_val = str(dt.strftime('%m'))+'-' +str(base_date.day) 
+	# Remove 'time' from timex_val.
         # For example, If timex_val = 2000-02-20 12:23:34.45, then
         # timex_val = 2000-02-20
         timex_val = re.sub(r'\s.*', '', timex_val)
