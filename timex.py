@@ -10,6 +10,9 @@ import re
 import string
 import os
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+from datetime import datetime, date, time
 
 # Requires eGenix.com mx Base Distribution
 # http://www.egenix.com/products/python/mxBase/
@@ -30,7 +33,7 @@ week_day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday|星期一|
 month = "(january|february|march|april|may|june|july|august|september| \
           october|november|december|一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)"
 dmy = "(year|day|week|month|年|日|周|月|週|禮拜|天)"
-rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|明天|今日|今晚|昨|頭七)"
+rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|明天|今日|今晚|昨|頭七|去年)"
 exp1 = "(before|after|earlier|later|ago|上個|下個|前|上|下|前)"
 exp2 = "(this|next|last|上個|下個|上|下|前|今)"
 iso = "\d+[/-]\d+[/-]\d+ \d+:\d+:\d+\.\d+"
@@ -40,7 +43,7 @@ regxp2 = "(" + exp2 + "(" + dmy + "|" + week_day + "|" + month + "))"
 #regxp2 = "(" + exp2 + " (" + dmy + "|" + week_day + "|" + month + "))"
 #regxp3 = "(\d{2}月)(\d{2}日)"
 #regxp3 = "(\d+?月)(\d+?日)"
-regxp3 = '((\d{4}年)?(\d{1,2}月)?(\d{1,2}日))|((\d{4}年)?(\d{1,2}月)(\d{1,2}日)?)'
+regxp3 = '((\d{2}年)?(\d{1,2}月)?(\d{1,2}日))|((\d{2}年)?(\d{1,2}月)(\d{1,2}日)?)'
 reg1 = re.compile(regxp1, re.IGNORECASE)
 reg2 = re.compile(regxp2, re.IGNORECASE)
 reg3 = re.compile(rel_day, re.IGNORECASE)
@@ -55,14 +58,12 @@ def tag(text):
     # re.findall() finds all the substring matches, keep only the full
     # matching string. Captures expressions such as 'number of days' ago, etc.
     found = reg1.findall(text)
-    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
         timex_found.append(timex)
 
     # Variations of this thursday, next year, etc
     found = reg2.findall(text)
-    print(found)
     found = [a[0] for a in found if len(a) > 1]
     for timex in found:
 	
@@ -85,10 +86,13 @@ def tag(text):
     """
      #*月*日
     found = reg6.findall(text)
-    print(found)
-    found = [a[0] for a in found if len(a) > 1]
+    founded=[]
+    for a in found:
+	founded.append(sorted(a, key=lambda x:len(x), reverse=True)[0])
+   # found = [a[0] for a in found if len(a) > 1]
+   # print(found)
     #found = reg6.findall(text)
-    for timex in found:
+    for timex in founded:
         timex_found.append(timex)
     
     # Tag only temporal expressions which haven't been tagged.
@@ -226,23 +230,23 @@ def ground(tagged_text, base_date):
             timex_val = str(dmy[2]) + '-' + str(dmy[1]) + '-' + str(dmy[0])
 
         # Specific dates
-        elif re.match(r'\d{4}', timex):
-            timex_val = str(timex)
+  #      elif re.match(r'\d{4}', timex):
+   #         timex_val = str(timex)
 
         # Relative dates
         elif re.match(r'tonight|tonite|today|今天|今晚|今日|今', timex, re.IGNORECASE):
             timex_val = str(base_date)
         elif re.match(r'yesterday|昨日|昨天|昨晚|昨', timex, re.IGNORECASE):
-            timex_val = str(base_date + RelativeDateTime(days=-1))
-        elif re.match(r'前天|前日|前晚', timex, re.IGNORECASE):
-            timex_val = str(base_date + RelativeDateTime(days=-2))
-        elif re.match(r'tomorrow|明天|明日', timex, re.IGNORECASE):
             timex_val = str(base_date + RelativeDateTime(days=+1))
-        elif re.match(r'後天', timex, re.IGNORECASE):
+        elif re.match(r'前天|前日|前晚', timex, re.IGNORECASE):
             timex_val = str(base_date + RelativeDateTime(days=+2))
+        elif re.match(r'tomorrow|明天|明日', timex, re.IGNORECASE):
+            timex_val = str(base_date + RelativeDateTime(days=-1))
+        elif re.match(r'後天', timex, re.IGNORECASE):
+            timex_val = str(base_date + RelativeDateTime(days=-2))
         
-	# Weekday in the previous week.
-        elif re.match(r'last ' + week_day, timex, re.IGNORECASE):
+        # Weekday in the following week.
+        elif re.match(r'next ' + week_day, timex, re.IGNORECASE):
             day = hashweekdays[timex.split()[1]]
             timex_val = str(base_date + RelativeDateTime(weeks=-1, \
                             weekday=(day,0)))
@@ -253,14 +257,14 @@ def ground(tagged_text, base_date):
             timex_val = str(base_date + RelativeDateTime(weeks=0, \
                             weekday=(day,0)))
 
-        # Weekday in the following week.
-        elif re.match(r'next ' + week_day, timex, re.IGNORECASE):
+	# Weekday in the previous week.
+        elif re.match(r'last ' + week_day, timex, re.IGNORECASE):
             day = hashweekdays[timex.split()[1]]
             timex_val = str(base_date + RelativeDateTime(weeks=+1, \
                               weekday=(day,0)))
 
         # Last, this, next week.
-        elif re.match(r'last week|上週|頭七|上禮拜|上星期|上周', timex, re.IGNORECASE):
+        elif re.match(r'next week|下週|下禮拜|下星期|下周', timex, re.IGNORECASE):
             year = (base_date + RelativeDateTime(weeks=-1)).year
 
             # iso_week returns a triple (year, week, day) hence, retrieve
@@ -276,15 +280,15 @@ def ground(tagged_text, base_date):
 	    #change
             #week = (base_date + RelativeDateTime(weeks=0)).iso_week[1]
             #timex_val = str(year) + 'W' + str(week)
-        elif re.match(r'next week|下週|下禮拜|下星期|下周', timex, re.IGNORECASE):
+        elif re.match(r'last week|上週|頭七|上禮拜|上星期|上周', timex, re.IGNORECASE):
             year = (base_date + RelativeDateTime(weeks=+1)).year
 	    timex_val = str(base_date + RelativeDateTime(weeks=+1))
 	    #change
             #week = (base_date + RelativeDateTime(weeks=+1)).iso_week[1]
             #timex_val = str(year) + 'W' + str(week)
 
-        # Month in the previous year.
-        elif re.match(r'last ' + month, timex, re.IGNORECASE):
+        # Month in the following year.
+        elif re.match(r'next ' + month, timex, re.IGNORECASE):
             month = hashmonths[timex.split()[1]]
             timex_val = str(base_date.year - 1) + '-' + str(month)
 
@@ -293,11 +297,11 @@ def ground(tagged_text, base_date):
             month = hashmonths[timex.split()[1]]
             timex_val = str(base_date.year) + '-' + str(month)
 
-        # Month in the following year.
-        elif re.match(r'next ' + month, timex, re.IGNORECASE):
+        # Month in the previous year.
+        elif re.match(r'last ' + month, timex, re.IGNORECASE):
             month = hashmonths[timex.split()[1]]
             timex_val = str(base_date.year + 1) + '-' + str(month)
-        elif re.match(r'上個月|上月', timex, re.IGNORECASE):
+        elif re.match(r'next month|下個月|下月', timex, re.IGNORECASE):
             # Handles the year boundary.
             if base_date.month == 1:
                 timex_val = str(base_date.year - 1) + '-' + '12'
@@ -305,20 +309,21 @@ def ground(tagged_text, base_date):
                 timex_val = str(base_date.year) + '-' + str(base_date.month - 1)
         elif re.match(r'this month|這個月', timex, re.IGNORECASE):
                 timex_val = str(base_date.year) + '-' + str(base_date.month)
-        elif re.match(r'next month|下個月|下月', timex, re.IGNORECASE):
+        elif re.match(r'上個月|上月', timex, re.IGNORECASE):
             # Handles the year boundary.
             if base_date.month == 12:
                 timex_val = str(base_date.year + 1) + '-' + '1'
             else:
                 timex_val = str(base_date.year) + '-' + str(base_date.month + 1)
         elif re.match(r'last year|去年', timex, re.IGNORECASE):
-            timex_val = str(base_date.year - 1)
+            timex_val = str(base_date.year + 1)
         elif re.match(r'this year|今年', timex, re.IGNORECASE):
             timex_val = str(base_date.year)
         elif re.match(r'next year|明年', timex, re.IGNORECASE):
-            timex_val = str(base_date.year + 1)
+            timex_val = str(base_date.year - 1)
         elif re.match(r'前年', timex, re.IGNORECASE):
-            timex_val = str(base_date.year - 2)
+            timex_val = str(base_date.year + 2)
+#following do not change
         elif re.match(r'\d+ days? (ago|earlier|before)', timex, re.IGNORECASE):
 
             # Calculate the offset by taking '\d+' part from the timex.
@@ -330,7 +335,6 @@ def ground(tagged_text, base_date):
         elif re.match(r'\d+ weeks? (ago|earlier|before)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
             year = (base_date + RelativeDateTime(weeks=-offset)).year
-            
             timex_val = str(base_date + RelativeDateTime(weeks=-offset))
 	    #week = (base_date + RelativeDateTime(weeks=-offset)).iso_week[1]
             #timex_val = str(year) + 'W' + str(week)
@@ -375,8 +379,29 @@ def ground(tagged_text, base_date):
         elif re.match(r'\d+ years? (later|after)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
             timex_val = str(base_date.year + offset)
-
-        # Remove 'time' from timex_val.
+#do not change upper
+	#new 
+	#%y年%b月%d日
+	elif re.match(r'(\d{2}年)(\d{1,2}月)(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%y年%m月%d日")
+	    timex_val = str(dt.strftime('%Y-%m-%d'))
+	#%y年%月
+	elif re.match(r'(\d{2}年)(\d{1,2}月)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%y年%m月")
+	    timex_val = str(dt.strftime('%Y-%m'))
+	#月日
+	elif re.match(r'(\d{1,2}月)(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%m月%d日")
+	    timex_val = str(dt.strftime('%m-%d'))
+	#日
+	elif re.match(r'(\d{1,2}日)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%d日")
+	    timex_val = str(base_date.month)+'-'+str(dt.strftime('%d'))
+        #月
+	elif re.match(r'(\d{1,2}月)',timex):
+	    dt =datetime.strptime(timex.encode('utf8'), "%m月")
+	    timex_val = str(dt.strftime('%m'))+'-' +str(base_date.day) 
+	# Remove 'time' from timex_val.
         # For example, If timex_val = 2000-02-20 12:23:34.45, then
         # timex_val = 2000-02-20
         timex_val = re.sub(r'\s.*', '', timex_val)
