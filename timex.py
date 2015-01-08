@@ -33,7 +33,7 @@ week_day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday|星期一|
 month = "(january|february|march|april|may|june|july|august|september| \
           october|november|december|一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)"
 dmy = "(year|day|week|month|年|日|周|月|週|禮拜|天)"
-rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|明天|今日|今晚|昨|頭七)"
+rel_day = "(today|yesterday|tomorrow|tonight|tonite|今天|明天|今日|今晚|昨|頭七|去年)"
 exp1 = "(before|after|earlier|later|ago|上個|下個|前|上|下|前)"
 exp2 = "(this|next|last|上個|下個|上|下|前|今)"
 iso = "\d+[/-]\d+[/-]\d+ \d+:\d+:\d+\.\d+"
