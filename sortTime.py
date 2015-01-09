@@ -21,7 +21,7 @@ import numpy as np
 
 
 
-def getTime(article):
+def getTime(article, newsid):
     """
     Do something to get the lastest date in the article, in Unix Time form (a.k.a. seconds from 1970/1/1)
     """
@@ -30,13 +30,20 @@ def getTime(article):
     # example: tagged = u'<TIMEX2 val="2014W52">last week</TIMEX2>'
     soup = BeautifulSoup(tagged)
     if soup.timex2 == None:
-        print("OMG can you believe that! This article has no time tags!==\n" + article + "\n==end of article").encode('utf-8')
+        # print("OMG can you believe that! This article has no time tags!==\n" + article + "\n==end of article").encode('utf-8')
         # print("OMG no tags!")
-        return int(random.randint(1370016000,1416758400))
+        randtime = random.randint(1370016000,1416758400)
+        print("Fail to get timetag from news " + str(newsid) + " , assign " + str(randtime))
+        return int(randtime)
     else:
         tagtimes = list()
         for i in soup.findAll('timex2'):
-            timestr = i['val']
+            try:
+                print "tagged time: " + str(i)
+                timestr = i['val']
+            except KeyError:
+                print "Error tagged time: " + str(i)
+                continue
             if timestr != 'UNKNOWN':
                 tagtimes.append(int(dateutil.parser.parse(timestr).strftime('%s')))
             else:
@@ -70,7 +77,7 @@ if __name__ == "__main__":
         news = line.strip().split(" ")
         newstime = list()
         for i in news:
-            newstime.append(getTime(file2str(i)))
+            newstime.append(getTime(file2str(i), i))
         sortednews = sorted(zip(news, newstime), key=lambda x:x[1])
         for t in sortednews:
             fout.write(str(t[1]) + " ")
