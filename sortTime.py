@@ -39,7 +39,7 @@ def getTime(article, newsid):
         tagtimes = list()
         for i in soup.findAll('timex2'):
             try:
-                print "tagged time: " + str(i)
+                # print "tagged time: " + str(i)
                 timestr = i['val']
             except KeyError:
                 print "Error tagged time: " + str(i)
@@ -49,9 +49,12 @@ def getTime(article, newsid):
             else:
                 print i
         if tagtimes != list():
+            print("Time prediction for news " + str(newsid) + ": " + str(np.array(tagtimes).min()))
             return np.array(tagtimes).min()
         else:
-            return 0
+            randtime = random.randint(1370016000,1416758400)
+            print("Fail to get timetag from news " + str(newsid) + " , assign " + str(randtime))
+            return randtime
 
 
 
