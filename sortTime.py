@@ -69,7 +69,8 @@ def file2str(filename):
     content = ""
     content +=soup.find('title').get_text()
     for i in soup.findAll('p'):
-            content +=i.get_text()
+            text = str(i.get_text())
+            content += text.strip() + "\n"
     return content
 
 
