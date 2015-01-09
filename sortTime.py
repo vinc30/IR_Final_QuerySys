@@ -32,7 +32,7 @@ def getTime(article):
     if soup.timex2 == None:
         print("OMG can you believe that! This article has no time tags!==\n" + article + "\n==end of article").encode('utf-8')
         # print("OMG no tags!")
-        return int(10000+ random.random() * 100)
+        return int(random.randint(1370016000,1416758400))
     else:
         tagtimes = list()
         for i in soup.findAll('timex2'):
