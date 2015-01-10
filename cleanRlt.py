@@ -15,7 +15,7 @@ if __name__ == "__main__":
     fin = open(sys.argv[1], "r")
     fout = open(sys.argv[2], "w")
     for i, line in enumerate(fin):
-        fout.write(str(i + 1) + "\n")
+        # fout.write(str(i + 1) + "\n")
         fout.write(line.strip().replace("[", "").replace("]", "").replace(",", "") + "\n")
     fin.close()
     fout.close()

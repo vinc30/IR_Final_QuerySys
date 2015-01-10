@@ -15,13 +15,13 @@ import datetime
 testlist = []
 DATAPATH = "/home/urjeans/ir/database/*"
 
-for i in range(len(glob(DATAPATH))):
+for kkk in range(len(glob(DATAPATH))):
     content=''
-    sentences = open(glob("database/" + str(i))[0]).read()
+    sentences = open(glob("database/" + str(kkk))[0]).read()
     soup = BeautifulSoup(sentences)
     content+=soup.find('title').get_text()
-    for i in soup.findAll('p'):
-        content += i.get_text()
+    for jjj in soup.findAll('p'):
+        content += jjj.get_text()
     testlist.append(content)
 words=[]
 jieba.set_dictionary('dict.txt.big')
@@ -29,8 +29,8 @@ for doc in testlist:
     words.append(list(jieba.cut(doc.lower(), cut_all=False)))
 
 token = "，。！？：；「」『』\n 、　".decode("utf8")
-for i, textlist in enumerate(words):
-    words[i] = [text for text in textlist if text not in token]
+for iii, textlist in enumerate(words):
+    words[iii] = [text for text in textlist if text not in token]
 dic = corpora.Dictionary(words)
 corpus = [dic.doc2bow(text, allow_update=True) for text in words] #print corpus
 tfidf = models.TfidfModel(corpus)
@@ -41,10 +41,7 @@ newsdic = {}
 with open("news_to_news_random_id_unlabeled_table_groundtruth_no_original_id.txt") as f:
     for line in f:
         (key, val1, val2) = line.split()
-        newsdic[key] = [val1, val2]
-
-newsdic = open("news_to_news_random_id_unlabeled_table_groundtruth_no_original_id.txt").readlines()
-newsdic = [line.strip().split(" ") for line  in newsdic]
+        newsdic[int(key)] = [val1, val2]
 
 
 def getBasetime(newsid):
@@ -54,10 +51,9 @@ def getBasetime(newsid):
     result = sorted(list(enumerate(sims)), reverse=True, key=lambda x: x[1])
     for idx, k in enumerate(result):
         if result[idx + 1][0] in newsdic:
-            timeobj = mx.DateTime.DateTime(int(newsdic[result[idx][0]][2].split('-')[0]), int(newsdic[result[idx][0]][2].split('-')[1]), int(newsdic[result[idx][0]][2].split('-')[2]))
+            timeobj = mx.DateTime.DateTime(int(newsdic[result[idx + 1][0]][1].split('-')[0]), int(newsdic[result[idx + 1][0]][1].split('-')[1]), int(newsdic[result[idx + 1][0]][1].split('-')[2]))
             return timeobj
-        else:
-            assert False, "Error: Can't find any time for news " + str(newsid)
+    assert False, "Error: Can't find any time for news " + str(newsid)
 
 def getTime(newsid):
     """
@@ -83,7 +79,10 @@ def getTime(newsid):
                     print "Error tagged time: " + str(i)
                     continue
                 if timestr != 'UNKNOWN':
-                    tagtimes.append(int(dateutil.parser.parse(timestr).strftime('%s')))
+                    try:
+                        tagtimes.append(int(dateutil.parser.parse(timestr).strftime('%s')))
+                    except ValueError:
+                        continue
                 else:
                     print i
     if flag ==0:
@@ -95,17 +94,21 @@ def getTime(newsid):
         if tagtimes != list():
             print("Time prediction for news " + str(newsid) + ": " + str(np.array(tagtimes).min()))
             return np.array(tagtimes).min()
+        else:
+            randtime = random.randint(1370016000,1416758400)
+            print("Fail to get timetag from news " + str(newsid) + " , assign " + str(randtime))
+            return int(randtime)
 
 
 # fq = open("query.txt", "r")
 fphase1 = open("phase1_pooling_result.txt", "r")
-fout1 = open("phase1_pooling_result_time_sorted.txt", "w") 
-fout2 = open("phase1_pooling_result_time_sorted_id.txt", "w")
+fout1 = open("phase1_time_sorted_id.txt", "w") 
+fout2 = open("phase1_time_sorted.txt", "w")
 for q in fphase1:
     newslist = q.strip().split(" ")
     newstime = list()
-    for i in newslist:
-        newstime.append(getTime(i)) 
+    for ijk in newslist:
+        newstime.append(getTime(ijk)) 
 
     """
     vec = list()
@@ -118,8 +121,8 @@ for q in fphase1:
     
     sortednews = sorted(zip(newslist, newstime), key=lambda x:x[1])   
     for t in sortednews:
-        fout1.write(str(t[1]) + " ")
-        fout2.write(str( datetime.datetime.fromtimestamp(float(t[1])).strftime('%Y-%m-%d')) + " ")
+        fout1.write(str(t[0]) + " ")
+        fout2.write(str(datetime.datetime.fromtimestamp(float(t[1])).strftime('%Y-%m-%d')) + " ")
     fout1.write('\n')
     fout2.write('\n') 
 
