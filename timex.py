@@ -397,10 +397,11 @@ def ground(tagged_text, base_date):
 	elif re.match(r'(\d{1,2}日)',timex):
 	    dt =datetime.strptime(timex.encode('utf8'), "%d日")
 	    timex_val = str(base_date.month)+'-'+str(dt.strftime('%d'))
+	    
         #月
 	elif re.match(r'(\d{1,2}月)',timex):
 	    dt =datetime.strptime(timex.encode('utf8'), "%m月")
-	    timex_val = str(dt.strftime('%m'))+'-' +str(base_date.day) 
+	    timex_val = str(dt.strftime('%m'))+'-01' 
 	# Remove 'time' from timex_val.
         # For example, If timex_val = 2000-02-20 12:23:34.45, then
         # timex_val = 2000-02-20
