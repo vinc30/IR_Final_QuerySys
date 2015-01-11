@@ -57,7 +57,8 @@ def getBasetime(newsid):
         if result[idx + 1][0] in newsdic:
             timeobj = mx.DateTime.DateTime(int(newsdic[result[idx + 1][0]][1].split('-')[0]), int(newsdic[result[idx + 1][0]][1].split('-')[1]), int(newsdic[result[idx + 1][0]][1].split('-')[2]))
             return timeobj
-    assert False, "Error: Can't find any time for news " + str(newsid)
+    print "Error: Can't find any time for news " + str(newsid) + ". Assign current time instead"
+    return mx.DateTime.now()
 
 def getTime(newsid):
     """
@@ -71,7 +72,10 @@ def getTime(newsid):
     for i in soup.findAll('p'):
         text = i.get_text()
         #    content += text.strip() + "\n"
-        tagged = timex.ground(timex.tag(text), getBasetime(newsid))
+        try:
+            tagged = timex.ground(timex.tag(text), getBasetime(newsid))
+        except ValueError:
+            continue
         soup2 = BeautifulSoup(tagged)
         if soup2.timex2 != None:
 	    flag = 1
