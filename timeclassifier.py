@@ -10,6 +10,7 @@ import mx
 import timex
 import random
 import datetime
+from os.path import exists
 
 
 testlist = []
@@ -31,7 +32,10 @@ for doc in testlist:
 token = "，。！？：；「」『』\n 、　".decode("utf8")
 for iii, textlist in enumerate(words):
     words[iii] = [text for text in textlist if text not in token]
-dic = corpora.Dictionary(words)
+if exists('irproject.dic'):
+    dic = corpora.Dictionary.load('irproject.dic')
+else:
+    dic = corpora.Dictionary(words)
 corpus = [dic.doc2bow(text, allow_update=True) for text in words] #print corpus
 tfidf = models.TfidfModel(corpus)
 corpus_tfidf = tfidf[corpus]
