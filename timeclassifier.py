@@ -109,29 +109,21 @@ def getTime(newsid):
 
 
 # fq = open("query.txt", "r")
-fphase1 = open("phase1_pooling_result.txt", "r")
-fout1 = open("phase1_time_sorted_id.txt", "w") 
-fout2 = open("phase1_time_sorted.txt", "w")
-for q in fphase1:
+fphase1 = open("phase1_pooling_result.txt", "r", 0)
+fout1 = open("phase1_time_sorted_id.txt", "w", 0) 
+fout2 = open("phase1_time_sorted.txt", "w", 0)
+for i,q in enumerate(fphase1):
     newslist = q.strip().split(" ")
     newstime = list()
     for ijk in newslist:
         newstime.append(getTime(ijk)) 
-
-    """
-    vec = list()
-    for i in range(len(query)):
-        for j in range(len(dic.doc2bow(list(jieba.cut(query[i].lower(), cut_all=False))))):
-            vec.append(dic.doc2bow(list(jieba.cut(query[i].lower(), cut_all=False)))[j])
-    sims = index[tfidf[vec]]
-    print vec
-    """
-    
     sortednews = sorted(zip(newslist, newstime), key=lambda x:x[1])   
     for t in sortednews:
         fout1.write(str(t[0]) + " ")
         fout2.write(str(datetime.datetime.fromtimestamp(float(t[1])).strftime('%Y-%m-%d')) + " ")
     fout1.write('\n')
-    fout2.write('\n') 
-
+    fout2.write('\n')
+    print(str(i) + " th line finished")
 fphase1.close()
+fout1.close()
+fout2.close()
